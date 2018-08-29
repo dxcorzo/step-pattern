@@ -8,8 +8,7 @@ namespace PatternApproach.Steps
     {
         internal override SampleResponse ProcessStep()
         {
-            //Console.WriteLine($"Hello from step one: {PreviousStepResult.Name}");
-            Console.WriteLine($"Hello from step one");
+            Console.WriteLine($"Hello from step one: {PreviousStepResult.Name}");
             
             return new SampleResponse { Name = "My Name" };
         }

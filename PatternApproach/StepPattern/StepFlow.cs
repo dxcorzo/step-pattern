@@ -31,7 +31,7 @@ namespace PatternApproach.StepPattern
 
             var currentStepResponse = currentStep.Execute();
 
-            if (!currentStepResponse.IsSuccessfullyExecuted)
+            if (currentStepResponse.HasExecutionErrors)
             {
                 if (onError != null)
                 {

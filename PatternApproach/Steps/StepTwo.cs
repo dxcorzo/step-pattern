@@ -9,7 +9,7 @@ namespace PatternApproach.Steps
         internal override AnotherSampleResponse ProcessStep()
         {
             Console.WriteLine($"Hello from step two: {PreviousStepResult.Name}");
-			//throw new Exception("Error from step 2");
+
             return new AnotherSampleResponse { LastName = "My lastName" };
         }
     }

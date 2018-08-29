@@ -9,7 +9,7 @@ namespace PatternApproach.StepPattern
 
         internal StepResponse<TResponse> OnStepCompleted(TResponse stepResponseData) => new StepResponse<TResponse>
         {
-            IsSuccessfullyExecuted = true,
+            HasExecutionErrors = false,
             ErrorMessage = string.Empty,
             Result = stepResponseData
         };
@@ -26,32 +26,27 @@ namespace PatternApproach.StepPattern
             get
             {
                 if (_previousStepResult == null)
-                {
                     throw new ArgumentException("Previous step returned null or is not defined");
-                }
 
                 return _previousStepResult;
             }
             set => _previousStepResult = value;
         }
 
-        internal override void SetPreviousStepReponse(StepResponse currentStepResponse)
-        {
-            PreviousStepResult = ((StepResponse<TLastResponse>) currentStepResponse).Result;
-        }
+        internal override void SetPreviousStepReponse(StepResponse currentStepResponse) => PreviousStepResult = ((StepResponse<TLastResponse>) currentStepResponse).Result;
     }
 
     public abstract class Step
     {
-        public StepResponse StepExecutedOk => new StepResponse
+        public StepResponse StepExecutedOk() => new StepResponse
         {
-            IsSuccessfullyExecuted = true,
+            HasExecutionErrors = false,
             ErrorMessage = string.Empty
         };
 
         internal StepResponse OnStepError(Exception ex) => new StepResponse
         {
-            IsSuccessfullyExecuted = false,
+            HasExecutionErrors = true,
             ErrorMessage = ex.ToString(),
             InnerException = ex
         };

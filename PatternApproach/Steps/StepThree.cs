@@ -9,8 +9,8 @@ namespace PatternApproach.Steps
         internal override StepResponse ProcessStep()
         {
             Console.WriteLine($"Hello from step three: {PreviousStepResult.LastName}");
-
-            return StepExecutedOk;
+            
+            return StepExecutedOk();
         }
     }
 }

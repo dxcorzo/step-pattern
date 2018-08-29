@@ -9,7 +9,6 @@ namespace PatternApproach.Steps
         internal override AnotherSampleResponse ProcessStep()
         {
             Console.WriteLine("Hello from step four");
-            //throw new Exception("Error from step 4");
 
             return new AnotherSampleResponse { LastName = "Response for S4" };
         }

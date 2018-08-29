@@ -6,7 +6,7 @@ namespace PatternApproach.StepPattern
     {
         public string ErrorMessage { get; set; }
 
-        public bool IsSuccessfullyExecuted { get; set; } = false;
+        public bool HasExecutionErrors { get; set; } = false;
 
         public Exception InnerException { get; set; }
 
