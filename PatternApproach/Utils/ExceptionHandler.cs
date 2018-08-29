@@ -36,5 +36,25 @@ namespace PatternApproach.Utils
                 return onErrorHandler.Invoke(ex);
             }
         }
+
+        public static async Task<StepResponse> ExecuteAsync<T>(Func<T> code, Func<Exception, StepResponse> onErrorHandler, Func<T, StepResponse> onCompleteHandler)
+        {
+            if (code == null)
+            {
+                throw new ArgumentException("code param is null");
+            }
+
+            try
+            {
+                var returnData = await Task.Run(code);
+                return onCompleteHandler.Invoke(returnData);
+            }
+            catch (Exception ex)
+            {
+                return onErrorHandler.Invoke(ex);
+            }
+
+        }
+
     }
 }

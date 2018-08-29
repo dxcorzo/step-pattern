@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PatternApproach.StepPattern
 {
     public class StepFlow
     {
-        private readonly Queue<Step> _steps;
+        private readonly ConcurrentQueue<Step> _steps;
 
-        public StepFlow() => _steps = new Queue<Step>();
+        public StepFlow() => _steps = new ConcurrentQueue<Step>();
 
         internal StepFlow AddStep(Step stepToAdd)
         {
@@ -17,19 +19,20 @@ namespace PatternApproach.StepPattern
 
         public StepFlow WithData<T>(T dataForStep)
         {
-            _steps.Peek().SetPreviousStepReponse(StepResponse.FromData(dataForStep));
+            _steps.TryPeek(out var nextStep);
+            nextStep.SetPreviousStepReponse(StepResponse.FromData(dataForStep));
             return this;
         }
 
-        public void Run() => ProcessQueue<StepResponse>();
+        public async void Run() => await ProcessQueue<StepResponse>();
 
-        public void Run<T>(Action<T> onSuccess, Action<Exception> onError) => ProcessQueue(onSuccess, onError);
+        public async void Run<T>(Action<T> onSuccess, Action<Exception> onError) => await ProcessQueue(onSuccess, onError);
 
-        private void ProcessQueue<T>(Action<T> onSuccess = null, Action<Exception> onError = null)
+        private async Task ProcessQueue<T>(Action<T> onSuccess = null, Action<Exception> onError = null)
         {
-            var currentStep = _steps.Dequeue();
+            _steps.TryDequeue(out var currentStep);
 
-            var currentStepResponse = currentStep.Execute();
+            var currentStepResponse = await currentStep.ExecuteAsync();
 
             if (currentStepResponse.HasExecutionErrors)
             {
@@ -48,9 +51,10 @@ namespace PatternApproach.StepPattern
                 return;
             }
 
-            _steps.Peek().SetPreviousStepReponse(currentStepResponse);
+            _steps.TryPeek(out var nextStep);
+            nextStep.SetPreviousStepReponse(currentStepResponse);
 
-            ProcessQueue(onSuccess, onError);
+            await ProcessQueue(onSuccess, onError);
         }
         
     }

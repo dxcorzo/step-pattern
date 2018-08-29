@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using PatternApproach.Utils;
 
 namespace PatternApproach.StepPattern
@@ -7,14 +8,17 @@ namespace PatternApproach.StepPattern
     {
         internal abstract TResponse ProcessStep();
 
-        internal StepResponse<TResponse> OnStepCompleted(TResponse stepResponseData) => new StepResponse<TResponse>
+        private StepResponse OnStepCompleted(TResponse stepResponseData)
         {
-            HasExecutionErrors = false,
-            ErrorMessage = string.Empty,
-            Result = stepResponseData
-        };
-
-        internal override StepResponse Execute() => ExceptionHandler.Execute(ProcessStep, OnStepError, OnStepCompleted);
+            return new StepResponse<TResponse>
+            {
+                HasExecutionErrors = false,
+                ErrorMessage = string.Empty,
+                Result = stepResponseData
+            };
+        }
+        
+        internal override async Task<StepResponse> ExecuteAsync() => await ExceptionHandler.ExecuteAsync(ProcessStep, OnStepError, OnStepCompleted);
     }
 
     public abstract class Step<TResponse, TLastResponse> : Step<TResponse>
@@ -51,7 +55,7 @@ namespace PatternApproach.StepPattern
             InnerException = ex
         };
         
-        internal abstract StepResponse Execute();
+        internal abstract Task<StepResponse> ExecuteAsync();
 
         internal virtual void SetPreviousStepReponse(StepResponse currentStepResponse) { }
     }
